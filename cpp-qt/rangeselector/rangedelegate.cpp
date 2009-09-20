@@ -24,6 +24,8 @@
 #include "rangeselector.h"
 #include "rangeselector_p.h"
 
+#include <QPainter>
+
 QRangeDelegate::QRangeDelegate()
 {
 }
@@ -33,31 +35,38 @@ int QRangeDelegate::logicalPosition(QRangeSelector::PositionType position) const
 	return m_logicalPositions[position];
 }
 
-int QRangeDelegate::physicalPosition(QRangeSelector::PositionType position) const
-{
-	return m_physicalPositions[position];
-}
-
 qreal QRangeDelegate::relativePosition(QRangeSelector::PositionType position) const
 {
 	return m_relativePositions[position];
 }
 
-QRect QRangeDelegate::rect() const
+QRectF QRangeDelegate::rect() const
 {
-	return m_rect;
+	return QRectF(0, 0, 1, 1);
 }
 
 void QRangeDelegate::doRender(QPainter* painter, const QRangeSelector* rs)
 {
 	/* Q_D(const QRangeSelector) = */ const QRangeSelectorPrivate* const d = rs->d_func();
-	m_rect = rs->contentsRect();
+	QRect rect = rs->contentsRect();
 	m_logicalPositions = d->m_logicalPositions;
 	m_relativePositions = d->m_relativePositions;
-	m_physicalPositions = d->m_physicalPositions;
 	//The following loop is a workaround for a bug in QGradient that misrenders gradients when stops are at the same relative location.
 	for (int i = 0; i + 1 < QRangeSelector::PositionCount; ++i)
 		m_relativePositions[i + 1] = qMax(m_relativePositions[i + 1], m_relativePositions[i] + 0.0001);
+	//transform coordinate system of the painter to have the physical contentsRect and QRectF(0, 0, 1, 1) match
+	painter->save();
+	if (rs->layoutDirection() == Qt::LeftToRight)
+	{
+		painter->translate(rect.topLeft());
+		painter->scale(rect.width(), rect.height());
+	}
+	else
+	{
+		painter->translate(rect.topRight());
+		painter->scale(-rect.width(), rect.height());
+	}
 	//call pure virtual function for the rendering
 	render(painter);
+	painter->restore();
 }

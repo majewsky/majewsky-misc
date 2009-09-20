@@ -33,7 +33,6 @@
 #include <QStyleOption>
 
 //TODO: Finish API documentation. Consistent naming in API (regarding specialPosition).
-//TODO: Fix behavior in RTL environments.
 //TODO: Handle wheel events?
 
 QLineEdit* someLineEdit = 0;
@@ -75,7 +74,11 @@ int QRangeSelectorPrivate::mapPhysicalToLogicalPosition(int physicalPosition) co
 	const int rangeMaximum = m_logicalPositions[Maximum];
 	const qreal rangeLength = rangeMaximum - rangeMinimum;
 	//map physical to logical coordinates
-	const qreal relativePosition = qreal(physicalPosition - rect.left()) / rect.width();
+	qreal relativePosition;
+	if (q->layoutDirection() == Qt::LeftToRight)
+		relativePosition = qreal(physicalPosition - rect.left()) / rect.width();
+	else
+		relativePosition = qreal(rect.right() - physicalPosition) / rect.width();
 	return qRound(relativePosition * rangeLength) + rangeMinimum;
 }
 
@@ -92,8 +95,12 @@ void QRangeSelectorPrivate::updatePhysicalPositions()
 {
 	Q_Q(QRangeSelector);
 	const QRect rect = q->contentsRect();
+	bool isLTR = q->layoutDirection() == Qt::LeftToRight;
 	for (int i = 0; i < PositionCount; ++i)
-		m_physicalPositions[i] = qRound(m_relativePositions[i] * rect.width()) + rect.left();
+		if (isLTR)
+			m_physicalPositions[i] = qRound(m_relativePositions[i] * rect.width()) + rect.left();
+		else
+			m_physicalPositions[i] = rect.right() - qRound(m_relativePositions[i] * rect.width());
 }
 
 void QRangeSelectorPrivate::findStyleMetrics()
@@ -507,23 +514,24 @@ void QRangeSelector::keyPressEvent(QKeyEvent* event)
 		return;
 	}
 	int selectorPosition = d->m_logicalPositions[d->m_focusedSelector];
+	int layoutDirectionSign = (layoutDirection() == Qt::LeftToRight) ? 1 : -1;
 	switch (event->key())
 	{
 		case Qt::Key_Left:
 			//minus single step
-			selectorPosition -= d->m_singleStep;
+			selectorPosition -= layoutDirectionSign * d->m_singleStep;
 			break;
 		case Qt::Key_Right:
 			//plus single step
-			selectorPosition += d->m_singleStep;
+			selectorPosition += layoutDirectionSign * d->m_singleStep;
 			break;
 		case Qt::Key_PageDown:
 			//minus page step
-			selectorPosition -= d->m_pageStep;
+			selectorPosition -= layoutDirectionSign * d->m_pageStep;
 			break;
 		case Qt::Key_PageUp:
 			//plus page step
-			selectorPosition += d->m_pageStep;
+			selectorPosition += layoutDirectionSign * d->m_pageStep;
 			break;
 		case Qt::Key_Home:
 			//move to minimum

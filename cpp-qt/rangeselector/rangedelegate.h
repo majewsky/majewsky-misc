@@ -45,31 +45,22 @@ class QRangeDelegate : public QObject
 		///Entry point for QRangeSelector. Extracts some properties from the QRangeSelector, then passes control to the render() method, i.e., to the subclass implementation.
 		void doRender(QPainter* painter, const QRangeSelector* rs);
 	protected:
-		///Returns the logical value of the given \a position.
+		///Returns the value of the given \a position.
 		///\warning Returns valid values only during calls to the render() method.
 		int logicalPosition(QRangeSelector::PositionType position) const;
 		///Returns the relative value of the given \a position. The relative coordinates are defined by:
 		///\code
 		///relativePosition(QRangeSelector::Minimum) == 0
-		///relativePosition(QRangeSelector::Maximum) == 0
-		///\endcode
-		///\warning Returns valid values only during calls to the render() method.
-		int physicalPosition(QRangeSelector::PositionType position) const;
-		///Returns the physical value of the given \a position. The physical coordinates are defined by the widget:
-		///\code
-		///physicalPosition(QRangeSelector::Minimum) == rect().left()
-		///physicalPosition(QRangeSelector::Maximum) == rect().right()
+		///relativePosition(QRangeSelector::Maximum) == 1
 		///\endcode
 		///\warning Returns valid values only during calls to the render() method.
 		qreal relativePosition(QRangeSelector::PositionType position) const;
 		///Returns the rectangle into which the delegate should draw. (The painter is not clipped to this rectangle by default.)
-		///\warning Returns valid values only during calls to the render() method.
-		QRect rect() const;
+		///\returns QRect(0, 0, 100, 100) because the painter's transform is modified by RangeDelegate in such a way that this is always the content rectangle
+		QRectF rect() const;
 	private:
-		QRect m_rect;
 		QVector<int> m_logicalPositions;
 		QVector<qreal> m_relativePositions;
-		QVector<int> m_physicalPositions;
 };
 
 #endif // RANGESELECTOR_RANGEDELEGATE_H
