@@ -366,6 +366,7 @@ void QRangeSelector::setRange(int minimum, int maximum)
 {
 	setSpecialPosition(Minimum, minimum);
 	setSpecialPosition(Maximum, maximum);
+	setSpecialPosition(Minimum, minimum); //We set the minimum for a second time because it might have been restricted by the old maximum.
 }
 
 void QRangeSelector::setMinimumValue(int minimumValue)
@@ -382,6 +383,7 @@ void QRangeSelector::setValueRange(int minimumValue, int maximumValue)
 {
 	setSpecialPosition(MinimumValue, minimumValue);
 	setSpecialPosition(MaximumValue, maximumValue);
+	setSpecialPosition(MinimumValue, minimumValue); //We set the minimum value for a second time because it might have been restricted by the old maximum.
 }
 
 void QRangeSelector::setValue(int value)

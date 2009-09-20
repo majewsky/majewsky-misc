@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  ***************************************************************************/
 
-//NOTE: This file defines a test case which demoes some functions of QRange{Selector,Delegate}. If you choose to use QRange{Selector,Delegate} in your application, you'll obviously not need to import this file, but create QRangeSelector instances somewhere in your existing code, and create one QRangeDelegate instances as necessary.
+//NOTE: This file defines a test case which demoes some functions of QRange{Selector,Delegate}. If you choose to use QRange{Selector,Delegate} in your application, you'll obviously not need to import this file, but instantiate QRangeSelector somewhere in your existing code, and create QRangeDelegate subclasses as necessary.
 
 #include "rangedelegate.h"
 #include "rangeselector.h"
