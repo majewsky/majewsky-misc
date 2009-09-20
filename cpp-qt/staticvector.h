@@ -73,7 +73,7 @@ passMyDataToSomeOtherSubsystem(container.payload().data(), container.payload().s
 			///Initializes a new shared vector that initially is not able to hold any data. (You have to call resize() first.)
 			inline StaticVector();
 			///Constructs a read-only copy of \a other.
-			inline StaticVector(const Kolf::StaticVector<T>& other);
+			inline StaticVector(const Utils::StaticVector<T>& other);
 			///Destroys the vector.
 			inline ~StaticVector();
 			///Resizes the vector.
@@ -98,19 +98,19 @@ passMyDataToSomeOtherSubsystem(container.payload().data(), container.payload().s
 
 //Because it's a template, everything has to be implemented in this header.
 
-template<typename T> Kolf::StaticVector<T>::StaticVector()
+template<typename T> Utils::StaticVector<T>::StaticVector()
 {
 	m_data = 0;
 }
 
-template<typename T> Kolf::StaticVector<T>::StaticVector(const Kolf::StaticVector<T>& other)
+template<typename T> Utils::StaticVector<T>::StaticVector(const Utils::StaticVector<T>& other)
 {
 	m_data = other.m_data;
 	if (m_data)
 		++m_data->m_refCounter;
 }
 
-template<typename T> Kolf::StaticVector<T>::~StaticVector()
+template<typename T> Utils::StaticVector<T>::~StaticVector()
 {
 	if (m_data && --m_data->m_refCounter == 0)
 	{
@@ -119,7 +119,7 @@ template<typename T> Kolf::StaticVector<T>::~StaticVector()
 	}
 }
 
-template<typename T> void Kolf::StaticVector<T>::resize(int size)
+template<typename T> void Utils::StaticVector<T>::resize(int size)
 {
 	//detach from old data
 	if (m_data && --m_data->m_refCounter == 0)
@@ -140,22 +140,22 @@ template<typename T> void Kolf::StaticVector<T>::resize(int size)
 	}
 }
 
-template<typename T> int Kolf::StaticVector<T>::size() const
+template<typename T> int Utils::StaticVector<T>::size() const
 {
 	return m_data ? m_data->m_size : 0;
 }
 
-template<typename T> int Kolf::StaticVector<T>::count() const
+template<typename T> int Utils::StaticVector<T>::count() const
 {
 	return size();
 }
 
-template<typename T> T* Kolf::StaticVector<T>::data() const
+template<typename T> T* Utils::StaticVector<T>::data() const
 {
 	return m_data ? m_data->m_base : 0;
 }
 
-template<typename T> T Kolf::StaticVector<T>::value(int i, const T& defaultValue) const
+template<typename T> T Utils::StaticVector<T>::value(int i, const T& defaultValue) const
 {
 	if (!m_data)
 		return defaultValue;
@@ -164,14 +164,14 @@ template<typename T> T Kolf::StaticVector<T>::value(int i, const T& defaultValue
 	return m_data->m_base[i];
 }
 
-template<typename T> const T& Kolf::StaticVector<T>::at(int i) const
+template<typename T> const T& Utils::StaticVector<T>::at(int i) const
 {
 	Q_ASSERT(m_data);
 	Q_ASSERT(i >= 0 && i < m_data->m_size);
 	return m_data->m_base[i];
 }
 
-template<typename T> T& Kolf::StaticVector<T>::operator[](int i)
+template<typename T> T& Utils::StaticVector<T>::operator[](int i)
 {
 	Q_ASSERT(m_data);
 	Q_ASSERT(i >= 0 && i < m_data->m_size);
