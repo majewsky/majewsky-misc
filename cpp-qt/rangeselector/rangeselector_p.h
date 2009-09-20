@@ -67,7 +67,7 @@ class QRangeSelectorPrivate
 		QRangeSelector::PositionType m_focusedSelector; //index of selector that has focus currently (or -1)
 		bool m_mouseFocus;
 		//geometry
-		int m_arrowOffset;
+		int m_arrowOffsetTipSide, m_arrowOffsetBaseSide;
 		int m_arrowPadding; //reserved space for arrows (in vertical direction)
 		QSize m_sizeHint;
 };

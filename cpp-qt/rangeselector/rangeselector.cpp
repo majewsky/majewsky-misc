@@ -51,7 +51,8 @@ QRangeSelectorPrivate::QRangeSelectorPrivate(QRangeSelector* widget, QRangeSelec
 	, m_usedSelectors(PositionCount, false)
 	, m_focusedSelector(QRangeSelector::NullPosition)
 	, m_mouseFocus(false)
-	, m_arrowOffset(0)
+	, m_arrowOffsetTipSide(0)
+	, m_arrowOffsetBaseSide(0)
 	, m_arrowPadding(0)
 {
 	m_usedSelectors[Value] = type & QRangeSelector::ValueSelection;
@@ -118,10 +119,13 @@ void QRangeSelectorPrivate::findStyleMetrics()
 	q->style()->drawPrimitive(QStyle::PE_IndicatorSpinUp, &opt, &arrowPainter);
 	arrowPainter.end();
 	//look for the upper end of the arrow along the middle axis of the image (i.e., x = 8)
-	m_arrowOffset = 0;
-	while (QColor::fromRgba(arrowImage.pixel(8, m_arrowOffset)).alpha() != 255)
-		++m_arrowOffset;
-	m_arrowPadding = 15 - m_arrowOffset - q->lineWidth() - q->midLineWidth();
+	m_arrowOffsetTipSide = 0;
+	while (QColor::fromRgba(arrowImage.pixel(8, m_arrowOffsetTipSide)).alpha() != 255)
+		++m_arrowOffsetTipSide;
+	m_arrowOffsetBaseSide = 15;
+	while (QColor::fromRgba(arrowImage.pixel(8, m_arrowOffsetBaseSide)).alpha() != 255)
+		--m_arrowOffsetBaseSide;
+	m_arrowPadding = m_arrowOffsetBaseSide - m_arrowOffsetTipSide - q->lineWidth() - q->midLineWidth();
 	//set size hint
 	if (!someLineEdit)
 	{
@@ -155,10 +159,10 @@ void QRangeSelectorPrivate::drawSelector(QPainter* painter, const QRect& content
 		//draw arrow at the bottom
 		QStyleOption opt;
 		opt.initFrom(q);
-		opt.rect = QRect(position - 9, contentsRect.bottom() - m_arrowOffset, 16, 16);
+		opt.rect = QRect(position - 9, contentsRect.bottom() - m_arrowOffsetTipSide, 16, 16);
 		q->style()->drawPrimitive(QStyle::PE_IndicatorSpinUp, &opt, painter, q);
 		//draw arrow at the top
-		opt.rect.moveBottom(contentsRect.top() + m_arrowOffset);
+		opt.rect.moveBottom(contentsRect.top() + m_arrowOffsetTipSide);
 		q->style()->drawPrimitive(QStyle::PE_IndicatorSpinDown, &opt, painter, q);
 	}
 }
