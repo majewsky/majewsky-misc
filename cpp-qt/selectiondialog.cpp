@@ -22,6 +22,8 @@
 
 #include "selectiondialog.h"
 
+#include <QPointer>
+
 Utils::SelectionDialog::SelectionDialog(QAbstractItemView* view, QWidget* parent, Qt::WFlags flags)
 	: KDialog(parent, flags)
 	, m_view(view)
@@ -36,9 +38,17 @@ QModelIndexList Utils::SelectionDialog::resultIndexes() const
 	return m_resultIndexes;
 }
 
-QAbstractItemView* Utils::SelectionDialog::view() const
+QModelIndexList Utils::SelectionDialog::exec()
 {
-	return m_view;
+	QPointer<Utils::SelectionDialog> ptr(this);
+	if (KDialog::exec())
+	{
+		if (ptr) //NOTE: If the app has recieved a quit event while the dialog's event loop was running, "this" would be a wild pointer.
+		{
+			return m_view->selectionModel()->selectedIndexes();
+		}
+	}
+	return QModelIndexList(); //dialog was aborted, or application has recieved a quit event while dialog was shown
 }
 
 void Utils::SelectionDialog::handleOkClicked()

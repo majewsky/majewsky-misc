@@ -32,21 +32,15 @@ namespace Utils
 	 * \class SelectionDialog
 	 * This is a dialog that allows the user to select something from some QAbstractItemView. After the QDialog::exec() call, the selected model indexes can be obtained from the resultIndexes() method.
 	 * \note The dialog takes ownership of the QAbstractItemView instance you give to it.
-	 * This is an example on how to use SelectionDialog:
+	 * This is an example on how to use SelectionDialog as a modal dialog:
 \code
 QListView* view = new QListView;
 ... //custom view initialization
 QPointer<Utils::SelectionDialog> dialog(new Utils::SelectionDialog(view));
 ... //custom dialog initialization
-if (dialog->exec())
+foreach (const QModelIndex& index, dialog->exec())
 {
-	if (dialog) //NOTE: See http://www.kdedevelopers.org/node/3919 for why this check is necessary.
-	{
-		foreach (const QModelIndex& index, dialog->resultIndexes())
-		{
-			//do something with that index
-		}
-	}
+	//do something with that index
 }
 delete dialog;
 \endcode
@@ -58,7 +52,9 @@ delete dialog;
 			explicit SelectionDialog(QAbstractItemView* view, QWidget* parent = 0, Qt::WFlags flags = 0);
 
 			QModelIndexList resultIndexes() const;
-			QAbstractItemView* view() const;
+			///A convenience method for modal dialogs.
+			///\returns an empty list if "Cancel" was clicked, or a list of all selected items if "OK" was clicked
+			QModelIndexList exec();
 		private Q_SLOTS:
 			void handleOkClicked();
 		private:
