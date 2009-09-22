@@ -30,7 +30,6 @@ namespace Utils
 {
 	/**
 	 * \class StaticVector
-	 * \since 2.0
 	 *
 	 * This class provides a vector data structure (i.e. a list in which the elements occupy adjacent memory positions) that is guaranteed not to change its position in memory until it is explicitly reallocated.
 	 *
