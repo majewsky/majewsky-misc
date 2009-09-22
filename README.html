@@ -19,20 +19,26 @@
     <th>Name of project or class</th>
     <th>Description</th>
     <th>Location</th>
-    <th>Build system/reqs</th>
+    <th>Build system<br/>Requirements</th>
    </tr>
    <tr><th colspan="4"><i>Utility classes</i></th></tr>
    <tr>
     <td><tt>QRangeSelector</tt></td>
     <td>Similar to a slider, this widget allows to select both values and ranges from a given range. The widget allows for arbitrary contents to be painted inside its frame.</td>
     <td>cpp-qt/rangeselector</td>
-    <td>QMake/Qt 4</td>
+    <td>QMake<br/>Qt&nbsp;4</td>
+   </tr>
+   <tr>
+    <td><tt>Utils::SelectionDialog</tt></td>
+    <td>If you want the user to select some <a href="http://qt.nokia.com/doc/latest/qmodelindex.html">items</a> from a <a href="http://qt.nokia.com/doc/latest/qabstractitemmodel.html">model</a>, this class relieves you from the need to create a separate KDialog subclass.</td>
+    <td>cpp-qt/selectiondialog.{h,cpp}</td>
+    <td>CMake<sup>1</sup><br/>kdelibs&nbsp;4</td>
    </tr>
    <tr>
     <td><tt>Utils::StaticVector</tt></td>
     <td>Nearly the same as <a href="http://qt.nokia.com/doc/latest/qvector.html"><tt>QVector</tt></a>, but it does not automatically resize or reallocate its data. This is useful for passing data pointers to C libraries.</td>
     <td>cpp-qt/staticvector.h</td>
-    <td>N.A./Qt 4</td>
+    <td>N.A.<br/>Qt&nbsp;4</td>
    </tr>
 <!--
    <tr>
@@ -41,31 +47,11 @@
     <td></td>
     <td></td>
    </tr>
-   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-   </tr>
-   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-   </tr>
-   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-   </tr>
-   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-   </tr>
 -->
   </table>
+  <p>The fineprint:</p>
+  <ol>
+   <li><tt>Utils::SelectionDialog</tt> is designed to be integrated in a build system that uses automoc4. In most cases, this will be CMake with the KDE 4 macro library for CMake.</li>
+  </ol>
  </body>
 </html>
