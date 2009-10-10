@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = 
+TARGET = modellistmodeltest
 DEPENDPATH += .
 INCLUDEPATH += .
 

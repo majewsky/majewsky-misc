@@ -29,7 +29,6 @@ Utils::ModelListModel::ModelListModel(QObject* parent)
 	: QAbstractItemModel(parent)
 	, m_metaModel(new QStandardItemModel)
 	, m_headerDataSubModel(0)
-	, m_runningTransaction(false)
 {
 }
 
@@ -66,12 +65,12 @@ void Utils::ModelListModel::addSubModelInternal(QStandardItem* metaItem, QAbstra
 	if (m_subModels.contains(subModel))
 		return;
 	const int newRow = m_subModels.count();
-	beginInsertRows(QModelIndex(), newRow, newRow); m_runningTransaction = true;
+	beginInsertRows(QModelIndex(), newRow, newRow);
 	metaItem->setEditable(false);
 	m_metaModel->appendRow(metaItem);
 	m_subModels << subModel;
 	subModel->QObject::setParent(this);
-	endInsertRows(); m_runningTransaction = false;
+	endInsertRows();
 	//connect signals
 	connect(subModel, SIGNAL(columnsAboutToBeInserted(const QModelIndex&, int, int)), this, SLOT(handleColumnsAboutToBeInserted(const QModelIndex&, int, int)));
 	connect(subModel, SIGNAL(columnsAboutToBeRemoved(const QModelIndex&, int, int)), this, SLOT(handleColumnsAboutToBeRemoved(const QModelIndex&, int, int)));
@@ -92,12 +91,12 @@ void Utils::ModelListModel::removeSubModel(QAbstractItemModel* subModel)
 	const int index = m_subModels.indexOf(subModel);
 	if (index == -1)
 		return;
-	beginRemoveRows(QModelIndex(), index, index); m_runningTransaction = true;
+	beginRemoveRows(QModelIndex(), index, index);
 	m_metaModel->removeRow(index);
 	m_subModels.removeAt(index);
 	if (subModel->QObject::parent() == this)
 		subModel->QObject::setParent(0);
-	endRemoveRows(); m_runningTransaction = false;
+	endRemoveRows();
 	disconnect(subModel, 0, this, 0);
 	if (m_headerDataSubModel == subModel)
 		setHeaderDataSubModel(0);
@@ -352,42 +351,26 @@ bool Utils::ModelListModel::submit()
 
 void Utils::ModelListModel::handleColumnsAboutToBeInserted(const QModelIndex& parent, int start, int end)
 {
-	if (!m_runningTransaction)
-	{
-		QAbstractItemModel* senderModel = safeModelCast(sender());
-		beginInsertColumns(mapFromSource(qMakePair(senderModel, parent)), start, end);
-	}
-	m_runningTransaction = true;
+	QAbstractItemModel* senderModel = safeModelCast(sender());
+	beginInsertColumns(mapFromSource(qMakePair(senderModel, parent)), start, end);
 }
 
 void Utils::ModelListModel::handleColumnsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
 {
-	if (!m_runningTransaction)
-	{
-		QAbstractItemModel* senderModel = safeModelCast(sender());
-		beginRemoveColumns(mapFromSource(qMakePair(senderModel, parent)), start, end);
-	}
-	m_runningTransaction = true;
+	QAbstractItemModel* senderModel = safeModelCast(sender());
+	beginRemoveColumns(mapFromSource(qMakePair(senderModel, parent)), start, end);
 }
 
 void Utils::ModelListModel::handleColumnsInserted()
 {
-	if (m_runningTransaction)
-	{
-		endInsertColumns();
-		emit layoutChanged();
-	}
-	m_runningTransaction = false;
+	endInsertColumns();
+	emit layoutChanged();
 }
 
 void Utils::ModelListModel::handleColumnsRemoved()
 {
-	if (m_runningTransaction)
-	{
-		endRemoveColumns();
-		emit layoutChanged();
-	}
-	m_runningTransaction = false;
+	endRemoveColumns();
+	emit layoutChanged();
 }
 
 void Utils::ModelListModel::handleDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
@@ -404,42 +387,26 @@ void Utils::ModelListModel::handleHeaderDataChanged(Qt::Orientation orientation,
 
 void Utils::ModelListModel::handleRowsAboutToBeInserted(const QModelIndex& parent, int start, int end)
 {
-	if (!m_runningTransaction)
-	{
-		QAbstractItemModel* senderModel = safeModelCast(sender());
-		beginInsertRows(mapFromSource(qMakePair(senderModel, parent)), start, end);
-	}
-	m_runningTransaction = true;
+	QAbstractItemModel* senderModel = safeModelCast(sender());
+	beginInsertRows(mapFromSource(qMakePair(senderModel, parent)), start, end);
 }
 
 void Utils::ModelListModel::handleRowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
 {
-	if (!m_runningTransaction)
-	{
-		QAbstractItemModel* senderModel = safeModelCast(sender());
-		beginRemoveRows(mapFromSource(qMakePair(senderModel, parent)), start, end);
-	}
-	m_runningTransaction = true;
+	QAbstractItemModel* senderModel = safeModelCast(sender());
+	beginRemoveRows(mapFromSource(qMakePair(senderModel, parent)), start, end);
 }
 
 void Utils::ModelListModel::handleRowsInserted()
 {
-	if (m_runningTransaction)
-	{
-		endInsertRows();
-		emit layoutChanged();
-	}
-	m_runningTransaction = false;
+	endInsertRows();
+	emit layoutChanged();
 }
 
 void Utils::ModelListModel::handleRowsRemoved()
 {
-	if (m_runningTransaction)
-	{
-		endRemoveRows();
-		emit layoutChanged();
-	}
-	m_runningTransaction = false;
+	endRemoveRows();
+	emit layoutChanged();
 }
 
 void Utils::ModelListModel::handleSubModelDeleted(QObject* model)

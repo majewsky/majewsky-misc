@@ -96,7 +96,6 @@ namespace Utils
 			QStandardItemModel* m_metaModel;
 			QList<QAbstractItemModel*> m_subModels;
 			QAbstractItemModel* m_headerDataSubModel;
-			bool m_runningTransaction; //A transaction is running between calls like beginInsertRows and endInsertRows.
 	};
 }
 
